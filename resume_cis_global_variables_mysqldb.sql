@@ -25,8 +25,8 @@ SELECT 'sql_mode' as name_variable,
        end as action_cmd
 union        
 select 'log_error' as name_variable,
+       'The error log contains information about events such as mysqld starting and stopping, when a table needs to be checked or repaired, and, depending on the host operating system, stack traces when mysqld fails.' as description_variable,
        @@global.log_error as value_variable,
-       '' as description_variable,
        case when @@global.log_error = 'stderr'
             then 'NOK - log_error is writes the error log to the console'
             else 'OK - log_error is writes the erros log to the file defined'
@@ -36,21 +36,21 @@ select 'log_error' as name_variable,
             else 'no action needed'
        end as action_cmd  
 union  
-select 'data_dir' as name_variable,
+select 'datadir' as name_variable,
+        'It is generally accepted that host operating systems should include different filesystem partitions for different purposes.  One set of filesystems are typically called system partitions, and are generally reserved for host system/application operation. The other set of filesystems are typically called non-system partitions, and such locations are generally reserved for storing data.' as description_variable,
        @@global.datadir as value_variable,
-        '' as description_variable,
-       'OK_NOK - Check location and access control' as diagnostic,
+        'OK_NOK - Check location and access control' as diagnostic,
        'set global datadir = {new directory different from the system};' as action_cmd
 union
 select 'log_bin_basename' as name_variable,
+       'MySQL can operate using a variety of log files, each used for different purposes.  These are the binary log, error log, slow query log, relay log, and general log.  Because these are files on the host operating system, they are subject to the permissions structure provided by the host and may be accessible by users other than the MySQL user.' as description_variable,
        @@global.log_bin_basename as value_variable,
-       '' as description_variable,
        'OK_NOK - Check location and access control' as diagnostic,
        'set global log_bin_basename = {new location different from the /var or /usr or root ' as action_cmd      
 union       
 select 'slow_query_log' as name_variable,
+	   'MySQL can operate using a variety of log files, each used for different purposes.  These are the binary log, error log, slow query log, relay log, and general log.  Because these are files on the host operating system, they are subject to the permissions structure provided by the host and may be accessible by users other than the MySQL user' as description_variable,
 	   @@global.slow_query_log as value_variable,
-	   '' as description_variable,
 	   case when @@global.slow_query_log = 0 
 	        then 'OK - slow_query_log is disable'
 	        else 'NOK - slow_query_log is enable. Verify need and check directory and access control configured in the variable slow_query_log_file'
@@ -61,20 +61,20 @@ select 'slow_query_log' as name_variable,
 	   end as action_cmd   
 union	   
 select 'slow_query_log_file' as name_variable,
+	   'MySQL can operate using a variety of log files, each used for different purposes. These are the binary log, error log, slow query log, relay log, and general log.  Because these are files on the host operating system, they are subject to the permissions structure provided by the host and may be accessible by users other than the MySQL user' as description_variable,
 	   @@global.slow_query_log_file as value_variable,
-	   '' as description_variable,
 	   'OK_NOK - Check directory and access control configured in the variable slow_query_log_file' as diagnostic,
 	   'SET GLOBAL slow_query_log_file = {new_location};' as action_cmd      
 union
 select 'relay_log_basename' as name_variable,
+	   'MySQL can operate using a variety of log files, each used for different purposes.  These are the binary log, error log, slow query log, relay log, and general log.  Because these are files on the host operating system, they are subject to the permissions structure provided by the host and may be accessible by users other than the MySQL user' as description_variable,
 	   @@global.relay_log_basename as value_variable,
-	   '' as description_variable,
 	   'OK_NOK - Check directory and access control configured in the variable relay_log_basename' as diagnostic,
 	   'SET GLOBAL relay_log_basename = {new_location};' as action_cmd
 union 	   
 select 'general_log' as name_variable,
+	   'MySQL can operate using a variety of log files, each used for different purposes.  These are the binary log, error log, slow query log, relay log, and general log.  Because these are files on the host operating system, they are subject to the permissions structure provided by the host and may be accessible by users other than the MySQL user' as description_variable,
 	   @@global.general_log as value_variable,
-	   '' as description_variable,
 	   CASE WHEN @@global.general_log = 0
 	        THEN 'OK - general_log is disable (0=OFF, 1=ON)'
 	        else 'NOK - general_log is enable. Check access control directory and file defined in general_log_file variable' 
@@ -85,14 +85,14 @@ select 'general_log' as name_variable,
             END AS action_cmd      
 union            
 select 'general_log_file' as name_variable,
+	   'MySQL can operate using a variety of log files, each used for different purposes.  These are the binary log, error log, slow query log, relay log, and general log.  Because these are files on the host operating system, they are subject to the permissions structure provided by the host and may be accessible by users other than the MySQL user' as description_variable,
 	   @@global.general_log_file as value_variable,
-	   '' as description_variable,
 	   'OK_NOK - Check directory and access control configured in the variable general_log_file' as diagnostic,
 	   'SET GLOBAL general_log_file = {new_location};' as action_cmd
 union 	   
 select 'local_infile' as name_variable,
+	   'The local_infile parameter dictates whether files located on the MySQL clients computer can be loaded or selected via LOAD DATA INFILE or SELECT local_file' as description_variable,
 	   @@global.local_infile as value_variable,
-	   '' as description_variable,
 	   CASE WHEN @@global.local_infile = 0
 	        THEN 'OK - local_infile is disable'
 	        else 'NOK - local_infile is enable. Check directory and access control configured in the variable secure_file_priv ' 
@@ -103,8 +103,8 @@ select 'local_infile' as name_variable,
             END AS action_cmd  
 union 
 SELECT 'daemon_memcached' as name_variable,
-       (select PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = 'daemon_memcached') as value_variable,
        'The InnoDB memcached Plugin allows users to access data stored in InnoDB with the memcached protocol. By default the plugin doesnt do authentication, which means that anyone with access to the TCP/IP port of the plugin can access and modify the data.' as description_variable,
+       (select PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = 'daemon_memcached') as value_variable,
        case when (select count(1) FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = 'daemon_memcached' and PLUGIN_STATUS = 'ACTIVE') > 0
             then 'NOK - The InnoDB memcached Plugin is active. He is vulnerable.'
             else 'OK - The InnoDB memcached Plugin is not installed'
@@ -115,8 +115,8 @@ SELECT 'daemon_memcached' as name_variable,
        end as action_cmd  
 union 
 select 'secure_file_priv' as name_variable,
+	   'The secure_file_priv option restricts to paths used by LOAD DATA INFILE or SELECT local_file. It is recommended that this option be set to a file system location that contains only resources expected to be loaded by MySQL' as description_variable,
 	   @@global.secure_file_priv as value_variable,
-	   '' as description_variable,
 	   CASE WHEN @@global.secure_file_priv = ''
 	        THEN 'NOK - No secure directories are set for uploading files'
 	        else 'OK - Just check the directory access control ' 
@@ -125,10 +125,34 @@ select 'secure_file_priv' as name_variable,
 	        THEN 'no action needed'
 	        ELSE 'set global secure_file_priv = {secure directory};'
             END AS action_cmd  
+union 
+SELECT 'File_priv' as name_variable,
+       'The File_priv privilege found in the mysql.user table is used to allow or disallow a user from reading and writing files on the server host.' as description_variable,
+       (select file_priv from mysql.user where File_priv = 'Y' and User <> 'root' limit 1) as value_variable,
+       case when (select count(1) from mysql.user where File_priv = 'Y' and User <> 'root') = 0
+            then 'OK - The File_priv privilege is not enabled for common users'
+            else 'NOK - The File_priv privilege is enabled for common users'
+       end as diagnostic,
+       case when (select count(1) from mysql.user where File_priv = 'Y' and User <> 'root') = 0
+            then 'no action needed'
+            else CONCAT("select user, host from mysql.user where File_priv = ", "'Y';", "and update mysql.user set file_priv = 'N' where user = $user and host = $host;")  
+       end as action_cmd  
+union 
+SELECT 'Super_priv' as name_variable,
+       'The SUPER privilege found in the mysql.user table governs the use of a variety of MySQL features. These features include, CHANGE MASTER TO, KILL, mysqladmin kill option, PURGE BINARY LOGS, SET GLOBAL, mysqladmin debug option, logging control, and more' as description_variable,
+       (select super_priv from mysql.user where super_priv = 'Y' and User <> 'root' limit 1) as value_variable,
+       case when (select count(1) from mysql.user where Super_priv = 'Y' and user <> 'root') = 0
+            then 'OK - The super_priv privilege is not enabled for common users'
+            else 'NOK - The super_priv privilege is enabled for common users'
+       end as diagnostic,
+       case when (select count(1) from mysql.user where Super_priv = 'Y' and user <> 'root') = 0
+            then 'no action needed'
+            else CONCAT("select user, host from mysql.user where super_priv = ", "'Y';", " - update mysql.user set file_priv = 'N' where user = $user and host = $host;")  
+       end as action_cmd 
 union             
 select 'have_ssl' as name_variable,
+	   'All network traffic must use SSL/TLS when traveling over untrusted networks.' as description_variable,
 	   @@global.have_ssl as value_variable,
-	   '' as description_variable,
 	   CASE WHEN @@global.have_ssl = 'YES'
 	        THEN 'OK - Secure Sockets Layer is enable'
 	        else 'NOK - Secure Sockets Layer is disable. All network traffic must use SSL/TLS when traveling over untrusted networks' 
@@ -139,8 +163,8 @@ select 'have_ssl' as name_variable,
             END AS action_cmd  
 union  
 SELECT 'ssl_type' as name_variable,  
-       ''  as value_variable,
        'All network traffic must use SSL / TLS when traveling over untrusted networks. SSL / TLS must be enforced per user for users entering the system through the net' as description_variable, 
+       ''  as value_variable,
        case when (select count(1) from mysql.user WHERE NOT HOST IN ('::1', '127.0.0.1', 'localhost') and ssl_type ='') >= 1
             then 'NOK - There are users without any specific SSL certificate.'
             else 'OK - All business users have an SSL certificate set'
@@ -151,8 +175,8 @@ SELECT 'ssl_type' as name_variable,
        end as action_cmd     
 union 
 select 'old_passwords' as name_variable,
+	   'The purpose of the old_passwords system variable is to permit backward compatibility with pre-4.1 clients under circumstances where the server would otherwise generate long password hashes' as description_variable,
 	   @@global.old_passwords as value_variable,
-	   '' as description_variable,
 	   CASE WHEN @@global.old_passwords = 0
 	        THEN 'OK - 0 the authenticate with the mysql_native_password. Recommended.'
 	        else 'NOK - different of 0 - this authentication method uses a vulnerable algorithm hash' 
@@ -163,8 +187,8 @@ select 'old_passwords' as name_variable,
             END AS action_cmd  
 union 
 select 'secure_auth' as name_variable,
+	   'If this variable is enabled, the server blocks connections by clients that attempt to use accounts that have passwords stored in the old (pre-4.1) format. Enable this variable to prevent all use of passwords employing the old format (and hence insecure communication over the network).' as description_variable,
 	   @@global.secure_auth as value_variable,
-	   '' as description_variable,
 	   CASE WHEN @@global.secure_auth = 1
 	        THEN 'OK - 1 is ON - The server blocks passwords in old formats'
 	        else 'NOK - different of 1 OFF - The server does not block passwords in old formats' 
@@ -174,96 +198,22 @@ select 'secure_auth' as name_variable,
 	        ELSE 'set global secure_auth = 1;'
             END AS action_cmd  
 union 
-SELECT 'validade_password' as name_variable,
-       PLUGIN_STATUS as value_variable,
-       '' as description_variable,
-       case when PLUGIN_STATUS = 'ACTIVE'
+SELECT 'validate_password' as name_variable,
+       'Password complexity includes password characteristics such as length, case, length, and character sets. This recommendation prevents users from choosing weak passwords which can easily be guessed. ' as description_variable,
+       (select PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = 'validate_password') as value_variable,
+       case when (select count(1) FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = 'validate_password' and PLUGIN_STATUS = 'ACTIVE') > 0
             then 'OK - Policies security password is active'
             else 'NOK - Policies security password is not installed'
        end as diagnostic,
-       case when PLUGIN_STATUS = 'ACTIVE'
+       case when (select count(1) FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = 'validate_password' and PLUGIN_STATUS = 'ACTIVE') > 0
             then 'no action needed'
-            else concat("INSTALL PLUGIN validate_password SONAME ","'validate_password.so';")
-       end as action_cmd     
-FROM INFORMATION_SCHEMA.PLUGINS 
-WHERE PLUGIN_NAME = 'validate_password'
-union
-select 'validate_password_policy' as name_variable,
-	   @@global.validate_password_policy as value_variable,
-	  'The validate_password_policy value can be specified using numeric values 0, 1, 2, or the corresponding symbolic values LOW, MEDIUM, STRONG. The following table describes the tests performed for each policy. 0-LOW - Check only the length, 1-MEDIUM - Check length, numeric, lowercase / uppercase and special characters. 2-STRONG - Check length, numeric, lowercase / uppercase and special characters, dictionary file' as description_variable,	   
-	   CASE WHEN @@global.validate_password_policy = 'MEDIUM'
-	        THEN 'OK - Control minimum of criteria of requirement for user password is defined'
-	        else 'NOK - Control of minimum number of special characters requirement for user password is NOT defined' 
-	   end as diagnostic,
-	   CASE WHEN @@global.validate_password_policy = 'MEDIUM'
-	        THEN 'no action needed'
-	        ELSE 'SET GLOBAL validate_password_policy = MEDIUM;'
-            END AS action_cmd  
-union 
-select 'validate_password_length' as name_variable,
-	   @@global.validate_password_length as value_variable,
-	  'This variable control the minimum number of characters that validate_password requires passwords to have' as description_variable,	   
-	   CASE WHEN @@global.validate_password_length >= 14
-	        THEN 'OK - The minimum number of characters that validate_password is defined 14 characters'
-	        else 'NOK - The minimum number of characters that validate_password is NOT defined or is defined with less of 14 characters' 
-	   end as diagnostic,
-	   CASE WHEN @@global.validate_password_length >= 14
-	        THEN 'no action needed'
-	        ELSE 'SET GLOBAL validate_password_length = 14;'
-            END AS action_cmd  
-union 
-select 'validate_password_check_user_name' as name_variable,
-	   @@global.validate_password_check_user_name as value_variable,
-	  'This variable controls user name matching. Compares passwords to the user name part of the effective user account for the current session and rejects them if they match' as description_variable,	   
-	   CASE WHEN @@global.validate_password_check_user_name = 1
-	        THEN 'OK - Control to prevent the password from being the same as the users name is enabled'
-	        else 'NOK - Control to prevent the password from being the same as the users name is disabled' 
-	   end as diagnostic,
-	   CASE WHEN @@global.validate_password_check_user_name = 1
-	        THEN 'no action needed'
-	        ELSE 'SET GLOBAL validate_password_check_user_name = ON;'
-            END AS action_cmd  
-union             
-select 'validate_password_mixed_case_count' as name_variable,
-	   @@global.validate_password_mixed_case_count as value_variable,
-	  'The minimum number of lowercase and uppercase characters that validate_password requires passwords to have if the password policy is MEDIUM or stronger.' as description_variable,	   
-	   CASE WHEN @@global.validate_password_mixed_case_count = 1
-	        THEN 'OK - Control of minimum number of lowercase and uppercase characters requirement for user password is defined'
-	        else 'NOK - Control of minimum number of lowercase and uppercase characters requirement for user password is NOT defined' 
-	   end as diagnostic,
-	   CASE WHEN @@global.validate_password_mixed_case_count = 1
-	        THEN 'no action needed'
-	        ELSE 'SET GLOBAL validate_password_mixed_case_count = 1;'
-            END AS action_cmd  
-union             
-select 'validate_password_number_count' as name_variable,
-	   @@global.validate_password_number_count as value_variable,
-	  'The minimum number of numbers characters that validate_password requires passwords to have if the password policy is MEDIUM or stronger.' as description_variable,	   
-	   CASE WHEN @@global.validate_password_number_count = 1
-	        THEN 'OK - Control of minimum number of numbers characters requirement for user password is defined'
-	        else 'NOK - Control of minimum number of numbers characters requirement for user password is NOT defined' 
-	   end as diagnostic,
-	   CASE WHEN @@global.validate_password_number_count = 1
-	        THEN 'no action needed'
-	        ELSE 'SET GLOBAL validate_password_number_count = 1;'
-            END AS action_cmd  
-union             
-select 'validate_password_special_char_count' as name_variable,
-	   @@global.validate_password_special_char_count as value_variable,
-	  'The minimum number of specials characters that validate_password requires passwords to have if the password policy is MEDIUM or stronger.' as description_variable,	   
-	   CASE WHEN @@global.validate_password_special_char_count = 1
-	        THEN 'OK - Control of minimum number of special characters requirement for user password is defined'
-	        else 'NOK - Control of minimum number of special characters requirement for user password is NOT defined' 
-	   end as diagnostic,
-	   CASE WHEN @@global.validate_password_special_char_count = 1
-	        THEN 'no action needed'
-	        ELSE 'SET GLOBAL validate_password_special_char_count = 1;'
-            END AS action_cmd  
+            else concat("INSTALL PLUGIN validate_password SONAME ","'validate_password.so'; and exec pwd_policies_mysqldb.sql")
+       end as action_cmd  
 union             
 select 'default_password_lifetime' as name_variable,
-	   @@global.default_password_lifetime as value_variable,
 	  'Password expiry for specific users provides user passwords with a unique time bounded lifetime.' as description_variable,	   
-	   CASE WHEN @@global.default_password_lifetime >= 90
+	   @@global.default_password_lifetime as value_variable,
+	  CASE WHEN @@global.default_password_lifetime >= 90
 	        THEN 'OK - Control of requires password change every 90 days is defined'
 	        else 'NOK - Control of requires password change every 90 days is NOT defined' 
 	   end as diagnostic,
@@ -273,8 +223,8 @@ select 'default_password_lifetime' as name_variable,
             END AS action_cmd 
 union             
 select 'MASTER_SSL_VERIFY_SERVER_CERT' as name_variable,
-       (select ssl_verify_server_cert  from mysql.slave_master_info) AS value_variable,
        'In the MySQL slave context the setting MASTER_SSL_VERIFY_SERVER_CERT indicates whether the slave should verify the masters certificate. This configuration item may be set to Yes or No, and unless SSL has been enabled on the slave the value will be ignored.' as description_variable,
+       (select ssl_verify_server_cert  from mysql.slave_master_info) AS value_variable,
        case when (select ssl_verify_server_cert  from mysql.slave_master_info) = 1
             then 'OK - Use of SSL certificate for authentication between master / slave is defined'
 	        else 'NOK - Use of SSL certificate for authentication between master / slave is NOT defined' 
