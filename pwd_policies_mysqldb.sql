@@ -36,13 +36,24 @@ SET GLOBAL validate_password_special_char_count=1;
 -- 2 - STRONG - Comprimento; caracteres numéricos, minúsculos / maiúsculos e especiais; arquivo de dicionário
 SET GLOBAL validate_password_policy = MEDIUM;
 
+SHOW VARIABLES LIKE 'default_password_lifetime';
+-- exige troca de senha a cada 90 dias
+SET GLOBAL default_password_lifetime=90;
+
 --
 -- 5.6
--- UPDATE mysql.user SET Password=PASSWORD('NEW_PASSWORD') WHERE User='root';
+-- UPDATE mysql.user SET plugin = 'mysql_native_password', authentication_string = PASSWORD('changeme') 
+-- WHERE User = 'root';
 -- FLUSH PRIVILEGES;
 -- 5.7 or more
 -- ALTER USER 'root'@'localhost' IDENTIFIED BY 'NEW_PASSWORD';
 --
+
+-- Lista user com senha em branco
+SELECT User,host FROM mysql.user WHERE authentication_string='';
+
+-- Lista user anônimo
+SELECT user,host FROM mysql.user WHERE user = '';
 
 
 -- necessário reiniciar serviço 
