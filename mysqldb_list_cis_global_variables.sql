@@ -82,7 +82,7 @@ select 'general_log' as name_variable,
 	   CASE WHEN @@global.general_log = 0
 	        THEN 'no action needed'
 	        ELSE CONCAT("set global general_log = ","'OFF';")
-            END AS action_cmd      
+       END AS action_cmd      
 union            
 select 'general_log_file' as name_variable,
 	   'MySQL can operate using a variety of log files, each used for different purposes.  These are the binary log, error log, slow query log, relay log, and general log.  Because these are files on the host operating system, they are subject to the permissions structure provided by the host and may be accessible by users other than the MySQL user' as description_variable,
@@ -135,7 +135,7 @@ SELECT 'File_priv' as name_variable,
        end as diagnostic,
        case when (select count(1) from mysql.user where File_priv = 'Y' and User <> 'root') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where File_priv = ", "'Y';", "and update mysql.user set file_priv = 'N' where user = $user and host = $host;")  
+            else CONCAT("select user, host from mysql.user where File_priv = ", "'Y';", "/* update mysql.user set file_priv = 'N' where user = $user and host = $host;*/")  
        end as action_cmd  
 union 
 SELECT 'Super_priv' as name_variable,
@@ -147,7 +147,7 @@ SELECT 'Super_priv' as name_variable,
        end as diagnostic,
        case when (select count(1) from mysql.user where Super_priv = 'Y' and user <> 'root') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where super_priv = ", "'Y';", " - update mysql.user set file_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;")  
+            else CONCAT("select user, host from mysql.user where super_priv = ", "'Y';", "/* update mysql.user set file_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;*/")  
        end as action_cmd 
 union             
 SELECT 'shutdown_priv' as name_variable,
@@ -159,7 +159,7 @@ SELECT 'shutdown_priv' as name_variable,
        end as diagnostic,
        case when (select count(1) from mysql.user where shutdown_priv = 'Y' and user <> 'root') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where shutdown_priv = ", "'Y';", " - update mysql.user set shutdown_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;")  
+            else CONCAT("select user, host from mysql.user where shutdown_priv = ", "'Y';", "/* update mysql.user set shutdown_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;*/")  
        end as action_cmd 
 union             
 SELECT 'create_user_priv' as name_variable,
@@ -171,7 +171,7 @@ SELECT 'create_user_priv' as name_variable,
        end as diagnostic,
        case when (select count(1) from mysql.user where create_user_priv = 'Y' and user <> 'root') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where create_user_priv = ", "'Y';", " - update mysql.user set create_user_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;")  
+            else CONCAT("select user, host from mysql.user where create_user_priv = ", "'Y';", "/* update mysql.user set create_user_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;*/")  
        end as action_cmd 
 union             
 SELECT 'grant_priv' as name_variable,
@@ -183,7 +183,7 @@ SELECT 'grant_priv' as name_variable,
        end as diagnostic,
        case when (select count(1) from mysql.user where grant_priv = 'Y' and user <> 'root') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where grant_priv = ", "'Y';", " - update mysql.user set grant_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;")  
+            else CONCAT("select user, host from mysql.user where grant_priv = ", "'Y';", "/* update mysql.user set grant_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;*/")  
        end as action_cmd 
 union             
 SELECT 'repl_slave_priv' as name_variable,
@@ -195,7 +195,7 @@ SELECT 'repl_slave_priv' as name_variable,
        end as diagnostic,
        case when (select count(1) from mysql.user where repl_slave_priv = 'Y' and user <> 'root') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where repl_slave_priv = ", "'Y';", " - update mysql.user set repl_slave_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;")  
+            else CONCAT("select user, host from mysql.user where repl_slave_priv = ", "'Y';", "/* update mysql.user set repl_slave_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;*/")  
        end as action_cmd 
 union             
 SELECT 'password_blank' as name_variable,
@@ -207,7 +207,7 @@ SELECT 'password_blank' as name_variable,
        end as diagnostic,
        case when (SELECT COUNT(1) FROM mysql.user WHERE authentication_string='') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where authentication_string='';", " - UPDATE mysql.user SET plugin = 'mysql_native_password', authentication_string = PASSWORD('$pwd') where user = $user and host = $host;")  
+            else CONCAT("select user, host from mysql.user where authentication_string='';", "/* UPDATE mysql.user SET plugin = 'mysql_native_password', authentication_string = PASSWORD('$pwd') where user = $user and host = $host;*/")  
        end as action_cmd 
 union             
 SELECT 'mysql_native_password' as name_variable,
@@ -219,7 +219,7 @@ SELECT 'mysql_native_password' as name_variable,
        end as diagnostic,
        case when (SELECT COUNT(1) FROM mysql.user WHERE plugin <> 'mysql_native_password') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where plugin <> 'mysql_native_password';", " - UPDATE mysql.user SET plugin = 'mysql_native_password' where user = $user and host = $host;")  
+            else CONCAT("select user, host from mysql.user where plugin <> 'mysql_native_password';", "/* UPDATE mysql.user SET plugin = 'mysql_native_password' where user = $user and host = $host;*/")  
        end as action_cmd 
 union             
 SELECT 'anonymous accounts' as name_variable,
@@ -231,7 +231,7 @@ SELECT 'anonymous accounts' as name_variable,
        end as diagnostic,
        case when (SELECT COUNT(1) FROM mysql.user WHERE user = '') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where user = '';", " - UPDATE mysql.user SET user = $user where user = '' and host = $host; or DELETE mysql.user where user = '' and host = $host;")  
+            else CONCAT("select user, host from mysql.user where user = '';", "/* UPDATE mysql.user SET user = $user where user = '' and host = $host; or DELETE mysql.user where user = '' and host = $host;*/")  
        end as action_cmd 
 union 
 SELECT 'wildcard_host' as name_variable,
@@ -243,7 +243,31 @@ SELECT 'wildcard_host' as name_variable,
        end as diagnostic,
        case when (SELECT COUNT(1) FROM mysql.user WHERE host = '%') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where host = '%';", " - UPDATE mysql.user SET host = $host where user = $user and host = '%';")  
+            else CONCAT("select user, host from mysql.user where host = '%';", " /* UPDATE mysql.user SET host = $host where user = $user and host = '%';*/")  
+       end as action_cmd 
+union
+SELECT 'wildcard_host' as name_variable,
+       'Users with wildcard hostnames (%) are granted permission to any location. It is best to avoid creating wildcard hostnames. Instead, create users and give them specific locations from which a given user may connect to and interact with the database.' as description_variable,
+        '%' as value_variable,
+        case when (SELECT COUNT(1) FROM mysql.user WHERE host = '%') = 0
+            then 'OK - No user is configured with wildcard hostname'
+            else 'NOK - There are users with wildcard hostname configuration. Check.'
+       end as diagnostic,
+       case when (SELECT COUNT(1) FROM mysql.user WHERE host = '%') = 0
+            then 'no action needed'
+            else CONCAT("select user, host from mysql.user where host = '%';", "/* UPDATE mysql.user SET host = $host where user = $user and host = '%';*/")  
+       end as action_cmd 
+union 
+SELECT 'grant_all' as name_variable,
+       'It is necessary to ensure that only administrative users have full access to the database' as description_variable,
+        '' as value_variable,
+        case when (SELECT count(1) FROM mysql.user WHERE ((Select_priv = 'Y') OR (Insert_priv = 'Y') OR (Update_priv = 'Y') OR (Delete_priv = 'Y') OR (Create_priv = 'Y') OR (Drop_priv = 'Y')) and user <> 'root') = 0
+            then 'OK - There are not users commons have all privileges'
+            else 'NOK - There are users commons have all privileges. Check.'
+       end as diagnostic,
+       case when (SELECT count(1) FROM mysql.user WHERE ((Select_priv = 'Y') OR (Insert_priv = 'Y') OR (Update_priv = 'Y') OR (Delete_priv = 'Y') OR (Create_priv = 'Y') OR (Drop_priv = 'Y')) and user <> 'root') = 0
+            then 'no action needed'
+            else CONCAT("SELECT USER, HOST FROM mysql.user WHERE ((Select_priv = 'Y') OR (Insert_priv = 'Y') OR (Update_priv = 'Y') OR (Delete_priv = 'Y') OR (Create_priv = 'Y') OR (Drop_priv = 'Y')) and user <> 'root';", "/* UPDATE mysql.user SET Drop_priv = 'N' where user = $user and host = $host;*/")  
        end as action_cmd 
 union 
 select 'have_ssl' as name_variable,
@@ -266,7 +290,7 @@ SELECT 'ssl_type' as name_variable,
             else 'OK - All business users have an SSL certificate set'
        end as diagnostic,
        case when (select count(1) from mysql.user WHERE NOT HOST IN ('::1', '127.0.0.1', 'localhost') and ssl_type ='') >= 1
-            then concat("select user, host, ssl_type FROM mysql.user WHERE NOT HOST IN (","'::1,'", "'127.0.0.1',","'localhost');", "-", "GRANT USAGE ON *.* TO ", "'user'@'host' REQUIRE SSL;'")
+            then concat("select user, host, ssl_type FROM mysql.user WHERE NOT HOST IN (","'::1,'", "'127.0.0.1',","'localhost');", "/* RUN */", "GRANT USAGE ON *.* TO ", "'user'@'host' REQUIRE SSL;'")
             else 'no action needed'
        end as action_cmd     
 union 
@@ -303,7 +327,7 @@ SELECT 'validate_password' as name_variable,
        end as diagnostic,
        case when (select count(1) FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = 'validate_password' and PLUGIN_STATUS = 'ACTIVE') > 0
             then 'no action needed'
-            else concat("INSTALL PLUGIN validate_password SONAME ","'validate_password.so'; /* Run mysqldb_alter_validate_password.sql")
+            else concat("INSTALL PLUGIN validate_password SONAME ","'validate_password.so'; /* Run script mysqldb_alter_validate_password.sql*/")
        end as action_cmd  
 union             
 select 'default_password_lifetime' as name_variable,
@@ -318,6 +342,18 @@ select 'default_password_lifetime' as name_variable,
 	        ELSE 'SET GLOBAL default_password_lifetime=90;'
             END AS action_cmd 
 union             
+SELECT 'audit_log' as name_variable,
+       'Password complexity includes password characteristics such as length, case, length, and character sets. This recommendation prevents users from choosing weak passwords which can easily be guessed. ' as description_variable,
+       (select PLUGIN_STATUS FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = 'audit_log') as value_variable,
+       case when (select count(1) FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = 'audit_log' and PLUGIN_STATUS = 'ACTIVE') > 0
+            then 'OK - Policies security password is active'
+            else 'NOK - Policies security password is not installed'
+       end as diagnostic,
+       case when (select count(1) FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = 'audit_log' and PLUGIN_STATUS = 'ACTIVE') > 0
+            then 'no action needed'
+            else concat("INSTALL PLUGIN audit_log SONAME ","'audit_log.so'; /* Run script mysqldb_alter_audit_log.sql */")
+       end as action_cmd  
+union             
 select 'MASTER_SSL_VERIFY_SERVER_CERT' as name_variable,
        'In the MySQL slave context the setting MASTER_SSL_VERIFY_SERVER_CERT indicates whether the slave should verify the masters certificate. This configuration item may be set to Yes or No, and unless SSL has been enabled on the slave the value will be ignored.' as description_variable,
        (select ssl_verify_server_cert  from mysql.slave_master_info) AS value_variable,
@@ -328,4 +364,4 @@ select 'MASTER_SSL_VERIFY_SERVER_CERT' as name_variable,
 	   CASE WHEN (select ssl_verify_server_cert  from mysql.slave_master_info) = 1
 	        THEN 'no action needed'
 	        ELSE 'STOP SLAVE; CHANGE MASTER TO MASTER_SSL_VERIFY_SERVER_CERT=1; START SLAVE;'
-            END AS action_cmd;
+            END AS action_cmd ;

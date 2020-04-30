@@ -11,6 +11,7 @@ WHERE PLUGIN_NAME LIKE 'validate_password%';
 INSTALL PLUGIN validate_password SONAME 'validate_password.so';
 */
 
+
 -- Enables control to prevent the password from being the same as the user's name 
 SET GLOBAL validate_password_check_user_name = ON;
 
