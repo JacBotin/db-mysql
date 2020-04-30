@@ -7,5 +7,6 @@ printf "Current date and time %s\n" "$now"
 #
 #vhost="db-mysql.hostname"
 vuser="root"
-time mysql -h localhost -u $vuser -p$1 -tee ~/home/db-mysql/security_global_variables_mysql.log < /home/db-mysql/resume_cis_global_variables_mysqldb.sql
+vdir=/home/jacqueline.botin/db-mysql
+time mysql -h localhost -u $vuser -p$1 < /$vdir/resume_cis_global_variables_mysqldb.sql >> /$vdir/diagnostic_cis_global_variables_mysqldb.txt
 
