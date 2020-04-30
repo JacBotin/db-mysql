@@ -1,3 +1,6 @@
+
+-- after install plugin 'validate_password' 
+
 select 'validate_password_policy' as name_variable,
 	   @@global.validate_password_policy as value_variable,
 	  'The validate_password_policy value can be specified using numeric values 0, 1, 2, or the corresponding symbolic values LOW, MEDIUM, STRONG. The following table describes the tests performed for each policy. 0-LOW - Check only the length, 1-MEDIUM - Check length, numeric, lowercase / uppercase and special characters. 2-STRONG - Check length, numeric, lowercase / uppercase and special characters, dictionary file' as description_variable,	   
