@@ -147,9 +147,105 @@ SELECT 'Super_priv' as name_variable,
        end as diagnostic,
        case when (select count(1) from mysql.user where Super_priv = 'Y' and user <> 'root') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where super_priv = ", "'Y';", " - update mysql.user set file_priv = 'N' where user = $user and host = $host;")  
+            else CONCAT("select user, host from mysql.user where super_priv = ", "'Y';", " - update mysql.user set file_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;")  
        end as action_cmd 
 union             
+SELECT 'shutdown_priv' as name_variable,
+       'The SHUTDOWN privilege simply enables use of the shutdown option to the mysqladmin command, which allows a user with the SHUTDOWN privilege the ability to shut down the MySQL server.' as description_variable,
+       (select shutdown_priv from mysql.user where shutdown_priv = 'Y' and User <> 'root' limit 1) as value_variable,
+       case when (select count(1) from mysql.user where shutdown_priv = 'Y' and user <> 'root') = 0
+            then 'OK - The shutdown privilege is not enabled for common users'
+            else 'NOK - The shutdown privilege is enabled for common users'
+       end as diagnostic,
+       case when (select count(1) from mysql.user where shutdown_priv = 'Y' and user <> 'root') = 0
+            then 'no action needed'
+            else CONCAT("select user, host from mysql.user where shutdown_priv = ", "'Y';", " - update mysql.user set shutdown_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;")  
+       end as action_cmd 
+union             
+SELECT 'create_user_priv' as name_variable,
+       'The CREATE USER privilege governs the right of a given user to add or remove users, change existing users names, or revoke existing users privileges.' as description_variable,
+       (select create_user_priv from mysql.user where create_user_priv = 'Y' and User <> 'root' limit 1) as value_variable,
+       case when (select count(1) from mysql.user where create_user_priv = 'Y' and user <> 'root') = 0
+            then 'OK - The create_user_priv privilege is not enabled for common users'
+            else 'NOK - The create_user_priv privilege is enabled for common users'
+       end as diagnostic,
+       case when (select count(1) from mysql.user where create_user_priv = 'Y' and user <> 'root') = 0
+            then 'no action needed'
+            else CONCAT("select user, host from mysql.user where create_user_priv = ", "'Y';", " - update mysql.user set create_user_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;")  
+       end as action_cmd 
+union             
+SELECT 'grant_priv' as name_variable,
+       'The GRANT OPTION privilege exists in different contexts (mysql.user, mysql.db) for the purpose of governing the ability of a privileged user to manipulate the privileges of other users names, or revoke existing users privileges.' as description_variable,
+       (select grant_priv from mysql.user where grant_priv = 'Y' and User <> 'root' limit 1) as value_variable,
+       case when (select count(1) from mysql.user where grant_priv = 'Y' and user <> 'root') = 0
+            then 'OK - The create_user_priv privilege is not enabled for common users'
+            else 'NOK - The create_user_priv privilege is enabled for common users'
+       end as diagnostic,
+       case when (select count(1) from mysql.user where grant_priv = 'Y' and user <> 'root') = 0
+            then 'no action needed'
+            else CONCAT("select user, host from mysql.user where grant_priv = ", "'Y';", " - update mysql.user set grant_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;")  
+       end as action_cmd 
+union             
+SELECT 'repl_slave_priv' as name_variable,
+       'The REPLICATION SLAVE privilege governs whether a given user (in the context of the master server) can request updates that have been made on the master server names, or revoke existing users privileges.' as description_variable,
+       (select repl_slave_priv from mysql.user where repl_slave_priv = 'Y' and User <> 'root' limit 1) as value_variable,
+       case when (select count(1) from mysql.user where repl_slave_priv = 'Y' and user <> 'root') = 0
+            then 'OK - The repl_slave_priv privilege is not enabled for common users'
+            else 'NOK - The repl_slave_priv privilege is enabled for common users'
+       end as diagnostic,
+       case when (select count(1) from mysql.user where repl_slave_priv = 'Y' and user <> 'root') = 0
+            then 'no action needed'
+            else CONCAT("select user, host from mysql.user where repl_slave_priv = ", "'Y';", " - update mysql.user set repl_slave_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;")  
+       end as action_cmd 
+union             
+SELECT 'password_blank' as name_variable,
+       'A user can create a blank password. Having a blank password is risky as anyone can just assume the user’s identity, enter the user’s loginID and connect to the server. This bypasses authentication, which is bad.' as description_variable,
+        '' as value_variable,
+        case when (SELECT COUNT(1) FROM mysql.user WHERE authentication_string='') = 0
+            then 'OK - No user has no password set'
+            else 'NOK - There are users with no password set. Check.'
+       end as diagnostic,
+       case when (SELECT COUNT(1) FROM mysql.user WHERE authentication_string='') = 0
+            then 'no action needed'
+            else CONCAT("select user, host from mysql.user where authentication_string='';", " - UPDATE mysql.user SET plugin = 'mysql_native_password', authentication_string = PASSWORD('$pwd') where user = $user and host = $host;")  
+       end as action_cmd 
+union             
+SELECT 'mysql_native_password' as name_variable,
+       'The mysql_native_password is the traditional method of authentication' as description_variable,
+        '' as value_variable,
+        case when (SELECT COUNT(1) FROM mysql.user WHERE plugin <> 'mysql_native_password') = 0
+            then 'OK - All users are using the recommended password policy mysql_native_password'
+            else 'NOK - There are users who are not using the recommended password policy mysql_native_password. Check.'
+       end as diagnostic,
+       case when (SELECT COUNT(1) FROM mysql.user WHERE plugin <> 'mysql_native_password') = 0
+            then 'no action needed'
+            else CONCAT("select user, host from mysql.user where plugin <> 'mysql_native_password';", " - UPDATE mysql.user SET plugin = 'mysql_native_password' where user = $user and host = $host;")  
+       end as action_cmd 
+union             
+SELECT 'anonymous accounts' as name_variable,
+       'Users can have an anonymous (empty or blank) username. These anonymous usernames have no passwords and any other user can use that anonymous username to connect to the MySQL server. Removal of these anonymous accounts ensures only identified and trusted users can access the MySQL server' as description_variable,
+        '' as value_variable,
+        case when (SELECT COUNT(1) FROM mysql.user WHERE user = '') = 0
+            then 'OK - No user is configured with anonymous usernames'
+            else 'NOK - There are users with anonymous usernames configuration. Check.'
+       end as diagnostic,
+       case when (SELECT COUNT(1) FROM mysql.user WHERE user = '') = 0
+            then 'no action needed'
+            else CONCAT("select user, host from mysql.user where user = '';", " - UPDATE mysql.user SET user = $user where user = '' and host = $host; or DELETE mysql.user where user = '' and host = $host;")  
+       end as action_cmd 
+union 
+SELECT 'wildcard_host' as name_variable,
+       'Users with wildcard hostnames (%) are granted permission to any location. It is best to avoid creating wildcard hostnames. Instead, create users and give them specific locations from which a given user may connect to and interact with the database.' as description_variable,
+        '%' as value_variable,
+        case when (SELECT COUNT(1) FROM mysql.user WHERE host = '%') = 0
+            then 'OK - No user is configured with wildcard hostname'
+            else 'NOK - There are users with wildcard hostname configuration. Check.'
+       end as diagnostic,
+       case when (SELECT COUNT(1) FROM mysql.user WHERE host = '%') = 0
+            then 'no action needed'
+            else CONCAT("select user, host from mysql.user where host = '%';", " - UPDATE mysql.user SET host = $host where user = $user and host = '%';")  
+       end as action_cmd 
+union 
 select 'have_ssl' as name_variable,
 	   'All network traffic must use SSL/TLS when traveling over untrusted networks.' as description_variable,
 	   @@global.have_ssl as value_variable,
@@ -207,7 +303,7 @@ SELECT 'validate_password' as name_variable,
        end as diagnostic,
        case when (select count(1) FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = 'validate_password' and PLUGIN_STATUS = 'ACTIVE') > 0
             then 'no action needed'
-            else concat("INSTALL PLUGIN validate_password SONAME ","'validate_password.so'; and exec pwd_policies_mysqldb.sql")
+            else concat("INSTALL PLUGIN validate_password SONAME ","'validate_password.so'; /* Run mysqldb_alter_validate_password.sql")
        end as action_cmd  
 union             
 select 'default_password_lifetime' as name_variable,
@@ -232,4 +328,4 @@ select 'MASTER_SSL_VERIFY_SERVER_CERT' as name_variable,
 	   CASE WHEN (select ssl_verify_server_cert  from mysql.slave_master_info) = 1
 	        THEN 'no action needed'
 	        ELSE 'STOP SLAVE; CHANGE MASTER TO MASTER_SSL_VERIFY_SERVER_CERT=1; START SLAVE;'
-            END AS action_cmd 
+            END AS action_cmd;
