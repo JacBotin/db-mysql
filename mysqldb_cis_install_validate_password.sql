@@ -7,10 +7,13 @@ FROM INFORMATION_SCHEMA.PLUGINS
 WHERE PLUGIN_NAME LIKE 'validate_password%';
 
 -- If the result of this command is null, it means that the password validation plugin is not installed.
+--
+--
+--
+--
+*/
 -- To install:   
 INSTALL PLUGIN validate_password SONAME 'validate_password.so';
-*/
-
 
 -- Enables control to prevent the password from being the same as the user's name 
 SET GLOBAL validate_password_check_user_name = ON;

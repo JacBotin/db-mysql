@@ -10,12 +10,14 @@ FROM INFORMATION_SCHEMA.PLUGINS
 WHERE PLUGIN_NAME LIKE 'audit_log%';
 
 -- If the result of this command is null, it means that the audit log plugin is not installed.
+--
+--
+--
+*/
 -- To install:   
 INSTALL PLUGIN audit_log SONAME 'audit_log.so';
-*/
 
--- After install
-set global audit_log_connection_policy = NONE;
+set global audit_log_connection_policy = ALL;
 
 SET GLOBAL audit_log_exclude_accounts = NULL;
 

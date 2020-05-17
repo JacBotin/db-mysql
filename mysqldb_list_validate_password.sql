@@ -1,5 +1,5 @@
 
--- after install plugin 'validate_password' 
+-- when plugin 'validate_password' is installed 
 
 select 'validate_password_policy' as name_variable,
 	   @@global.validate_password_policy as value_variable,

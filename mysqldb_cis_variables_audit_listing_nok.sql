@@ -1,3 +1,6 @@
+select action_cmd
+from
+(
 SELECT 'log_error_verbosity' as name_variable,
 	   'The log_error_verbosity system variable provides additional information to the MySQL log. A value of 1 enables logging of error messages. A value of 2 enables logging of error and warning messages, and a value of 3 enables logging of error, warning and note messages.' as description_variable,
        @@global.log_error_verbosity as value_variable,
@@ -364,4 +367,5 @@ select 'MASTER_SSL_VERIFY_SERVER_CERT' as name_variable,
 	   CASE WHEN (select ssl_verify_server_cert  from mysql.slave_master_info) = 1
 	        THEN 'no action needed'
 	        ELSE 'STOP SLAVE; CHANGE MASTER TO MASTER_SSL_VERIFY_SERVER_CERT=1; START SLAVE;'
-            END AS action_cmd ;
+            END AS action_cmd ) t
+where (substring(diagnostic, 1, 3) = 'NOK' or substring(diagnostic,1, 6) = 'OK_NOK');
