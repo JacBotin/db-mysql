@@ -17,6 +17,12 @@ This shell script executes four (4) * .sql scripts and generates another four (4
        mariadb_cis_variables_audit_listing_nok_userprivilegies.sql → results_audit/result_mariadb_cis_variables_audit_change_userprivilegies.sql
 
 
-After performing all the procedures, it is necessary to restart the instance to apply the modifications.
+After performing all the procedures, it is necessary to restart the instance to apply the modifications:
 
-References: http://www.itsecure.hu/library/image/CIS_Oracle_MySQL_Community_Server_5.7_Benchmark_v1.0.0.pdf
+Shell script gcloud_restart_instance.sh
+
+
+References: 
+http://www.itsecure.hu/library/image/CIS_Oracle_MySQL_Community_Server_5.7_Benchmark_v1.0.0.pdf
+https://mariadb.com/kb/en/system-variable-differences-between-mariadb-102-and-mysql-57/
+https://cloud.google.com/sql/docs/mysql/flags#gcloud_1
