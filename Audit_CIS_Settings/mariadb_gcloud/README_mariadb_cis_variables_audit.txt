@@ -1,6 +1,6 @@
-Procedure for auditing Oracle CIS standards in instances of mySQL / MariaDb databases on the Google Cloud platform.
+Guidance for auditing Oracle CIS standards in instances of mySQL / MariaDb databases on the Google Cloud platform.
 
-Shell script mariaadb_cis_variables_audit.sh:
+Run shell script mariaadb_cis_variables_audit.sh:
 
 The following information is requested during execution:
 – $hostname = database instance hostname
