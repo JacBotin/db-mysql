@@ -1,4 +1,4 @@
-select action_cmd
+select action_sql_check, action_sql_change
 from
 (
 SELECT case when (select count(1) from mysql.user where File_priv = 'Y' and User <> 'root') = 0
@@ -7,8 +7,12 @@ SELECT case when (select count(1) from mysql.user where File_priv = 'Y' and User
        end as diagnostic,
        case when (select count(1) from mysql.user where File_priv = 'Y' and User <> 'root') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where File_priv = ", "'Y';", "/* update mysql.user set file_priv = 'N' where user = $user and host = $host;*/")  
-       end as action_cmd  
+            else 'select user, host from mysql.user where File_priv = ''Y'';'
+	   end as action_sql_check,
+       case when (select count(1) from mysql.user where File_priv = 'Y' and User <> 'root') = 0
+            then 'no action needed'
+            else 'update mysql.user set file_priv = ''N'' where user = $user and host = $host;'
+	   end as action_sql_change
 union 
 SELECT case when (select count(1) from mysql.user where Super_priv = 'Y' and user <> 'root') = 0
             then 'OK - The super_priv privilege is not enabled for common users'
@@ -16,8 +20,12 @@ SELECT case when (select count(1) from mysql.user where Super_priv = 'Y' and use
        end as diagnostic,
        case when (select count(1) from mysql.user where Super_priv = 'Y' and user <> 'root') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where super_priv = ", "'Y';", "/* update mysql.user set file_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;*/")  
-       end as action_cmd 
+            else 'select user, host from mysql.user where super_priv = ''Y'';' 
+	   end as action_sql_check,
+	   case when (select count(1) from mysql.user where Super_priv = 'Y' and user <> 'root') = 0
+            then 'no action needed'
+            else 'update mysql.user set Super_priv = ''N'', plugin = ''mysql_native_password'' where user = $user and host = $host;'  
+       end as action_sql_change 
 union             
 SELECT case when (select count(1) from mysql.user where shutdown_priv = 'Y' and user <> 'root') = 0
             then 'OK - The shutdown privilege is not enabled for common users'
@@ -25,8 +33,12 @@ SELECT case when (select count(1) from mysql.user where shutdown_priv = 'Y' and 
        end as diagnostic,
        case when (select count(1) from mysql.user where shutdown_priv = 'Y' and user <> 'root') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where shutdown_priv = ", "'Y';", "/* update mysql.user set shutdown_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;*/")  
-       end as action_cmd 
+            else 'select user, host from mysql.user where shutdown_priv = ''Y'';'
+	   end as action_sql_check,
+	   case when (select count(1) from mysql.user where shutdown_priv = 'Y' and user <> 'root') = 0
+            then 'no action needed'
+            else 'update mysql.user set shutdown_priv = ''N'', plugin = ''mysql_native_password'' where user = $user and host = $host;'  
+       end as action_sql_change 
 union             
 SELECT case when (select count(1) from mysql.user where create_user_priv = 'Y' and user <> 'root') = 0
             then 'OK - The create_user_priv privilege is not enabled for common users'
@@ -34,8 +46,12 @@ SELECT case when (select count(1) from mysql.user where create_user_priv = 'Y' a
        end as diagnostic,
        case when (select count(1) from mysql.user where create_user_priv = 'Y' and user <> 'root') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where create_user_priv = ", "'Y';", "/* update mysql.user set create_user_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;*/")  
-       end as action_cmd 
+            else 'select user, host from mysql.user where create_user_priv = ''Y'';'
+	   end as action_sql_check,
+	   case when (select count(1) from mysql.user where create_user_priv = 'Y' and user <> 'root') = 0
+            then 'no action needed'
+            else 'update mysql.user set create_user_priv = ''N'', plugin = ''mysql_native_password'' where user = $user and host = $host;'  
+       end as action_sql_change
 union             
 SELECT case when (select count(1) from mysql.user where grant_priv = 'Y' and user <> 'root') = 0
             then 'OK - The create_user_priv privilege is not enabled for common users'
@@ -43,8 +59,12 @@ SELECT case when (select count(1) from mysql.user where grant_priv = 'Y' and use
        end as diagnostic,
        case when (select count(1) from mysql.user where grant_priv = 'Y' and user <> 'root') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where grant_priv = ", "'Y';", "/* update mysql.user set grant_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;*/")  
-       end as action_cmd 
+            else 'select user, host from mysql.user where grant_priv = ''Y'';'
+	   end as action_sql_check,
+       case when (select count(1) from mysql.user where grant_priv = 'Y' and user <> 'root') = 0
+            then 'no action needed'
+            else 'update mysql.user set grant_priv = ''N'', plugin = ''mysql_native_password'' where user = $user and host = $host;'  
+       end as action_sql_change 
 union             
 SELECT case when (select count(1) from mysql.user where repl_slave_priv = 'Y' and user <> 'root') = 0
             then 'OK - The repl_slave_priv privilege is not enabled for common users'
@@ -52,8 +72,12 @@ SELECT case when (select count(1) from mysql.user where repl_slave_priv = 'Y' an
        end as diagnostic,
        case when (select count(1) from mysql.user where repl_slave_priv = 'Y' and user <> 'root') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where repl_slave_priv = ", "'Y';", "/* update mysql.user set repl_slave_priv = 'N', plugin = 'mysql_native_password' where user = $user and host = $host;*/")  
-       end as action_cmd 
+            else 'select user, host from mysql.user where repl_slave_priv = ''Y'';'
+	   end as action_sql_check,
+	   case when (select count(1) from mysql.user where repl_slave_priv = 'Y' and user <> 'root') = 0
+            then 'no action needed'
+            else 'update mysql.user set repl_slave_priv = ''N'', plugin = ''mysql_native_password'' where user = $user and host = $host;'  
+       end as action_sql_change
 union
 SELECT case when (SELECT count(1) FROM mysql.user WHERE ((Select_priv = 'Y') OR (Insert_priv = 'Y') OR (Update_priv = 'Y') OR (Delete_priv = 'Y') OR (Create_priv = 'Y') OR (Drop_priv = 'Y')) and user <> 'root') = 0
             then 'OK - There are not users commons have all privileges'
@@ -61,8 +85,12 @@ SELECT case when (SELECT count(1) FROM mysql.user WHERE ((Select_priv = 'Y') OR 
        end as diagnostic,
        case when (SELECT count(1) FROM mysql.user WHERE ((Select_priv = 'Y') OR (Insert_priv = 'Y') OR (Update_priv = 'Y') OR (Delete_priv = 'Y') OR (Create_priv = 'Y') OR (Drop_priv = 'Y')) and user <> 'root') = 0
             then 'no action needed'
-            else CONCAT("SELECT USER, HOST FROM mysql.user WHERE ((Select_priv = 'Y') OR (Insert_priv = 'Y') OR (Update_priv = 'Y') OR (Delete_priv = 'Y') OR (Create_priv = 'Y') OR (Drop_priv = 'Y')) and user <> 'root';", "/* UPDATE mysql.user SET Drop_priv = 'N' where user = $user and host = $host;*/")  
-       end as action_cmd
+            else 'SELECT USER, HOST FROM mysql.user WHERE ((Select_priv = ''Y'') OR (Insert_priv = ''Y'') OR (Update_priv = ''Y'') OR (Delete_priv = ''Y'') OR (Create_priv = ''Y'') OR (Drop_priv = ''Y'')) and user <> ''root'';'
+	   end as action_sql_check,
+       case when (SELECT count(1) FROM mysql.user WHERE ((Select_priv = 'Y') OR (Insert_priv = 'Y') OR (Update_priv = 'Y') OR (Delete_priv = 'Y') OR (Create_priv = 'Y') OR (Drop_priv = 'Y')) and user <> 'root') = 0
+            then 'no action needed'
+            else 'UPDATE mysql.user SET Drop_priv = ''N'' where user = $user and host = $host;'  
+       end as action_sql_change
 union	   
 SELECT case when (SELECT COUNT(1) FROM mysql.user WHERE authentication_string='') = 0
             then 'OK - No user has no password set'
@@ -70,8 +98,12 @@ SELECT case when (SELECT COUNT(1) FROM mysql.user WHERE authentication_string=''
        end as diagnostic,
        case when (SELECT COUNT(1) FROM mysql.user WHERE authentication_string='') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where authentication_string='';", "/* UPDATE mysql.user SET plugin = 'mysql_native_password', authentication_string = PASSWORD('$pwd') where user = $user and host = $host;*/")  
-       end as action_cmd 
+            else 'select user, host from mysql.user where authentication_string='';'
+	   end as action_sql_check,
+	   case when (SELECT COUNT(1) FROM mysql.user WHERE authentication_string='') = 0
+            then 'no action needed'
+            else 'UPDATE mysql.user SET plugin = ''mysql_native_password'', authentication_string = PASSWORD(''$pwd'') where user = $user and host = $host;'  
+       end as action_sql_change 
 union             
 SELECT case when (SELECT COUNT(1) FROM mysql.user WHERE plugin <> 'mysql_native_password') = 0
             then 'OK - All users are using the recommended password policy mysql_native_password'
@@ -79,8 +111,12 @@ SELECT case when (SELECT COUNT(1) FROM mysql.user WHERE plugin <> 'mysql_native_
        end as diagnostic,
        case when (SELECT COUNT(1) FROM mysql.user WHERE plugin <> 'mysql_native_password') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where plugin <> 'mysql_native_password';", "/* UPDATE mysql.user SET plugin = 'mysql_native_password' where user = $user and host = $host;*/")  
-       end as action_cmd 
+            else 'select user, host from mysql.user where plugin <> ''mysql_native_password'';'
+	   end as action_sql_check,
+	   case when (SELECT COUNT(1) FROM mysql.user WHERE plugin <> 'mysql_native_password') = 0
+            then 'no action needed'
+            else 'UPDATE mysql.user SET plugin = ''mysql_native_password'' where user = $user and host = $host;'  
+       end as action_sql_change 
 union             
 SELECT case when (SELECT COUNT(1) FROM mysql.user WHERE user = '') = 0
             then 'OK - No user is configured with anonymous usernames'
@@ -88,8 +124,12 @@ SELECT case when (SELECT COUNT(1) FROM mysql.user WHERE user = '') = 0
        end as diagnostic,
        case when (SELECT COUNT(1) FROM mysql.user WHERE user = '') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where user = '';", "/* UPDATE mysql.user SET user = $user where user = '' and host = $host; or DELETE mysql.user where user = '' and host = $host;*/")  
-       end as action_cmd 
+            else 'select user, host from mysql.user where user = '';'
+	   end as action_sql_check,
+	   case when (SELECT COUNT(1) FROM mysql.user WHERE user = '') = 0
+            then 'no action needed'
+            else 'DELETE mysql.user where user = '' and host = $host;'
+       end as action_sql_change 
 union 
 SELECT case when (SELECT COUNT(1) FROM mysql.user WHERE host = '%') = 0
             then 'OK - No user is configured with wildcard hostname'
@@ -97,15 +137,24 @@ SELECT case when (SELECT COUNT(1) FROM mysql.user WHERE host = '%') = 0
        end as diagnostic,
        case when (SELECT COUNT(1) FROM mysql.user WHERE host = '%') = 0
             then 'no action needed'
-            else CONCAT("select user, host from mysql.user where host = '%';", " /* UPDATE mysql.user SET host = $host where user = $user and host = '%';*/")  
-       end as action_cmd 
+            else 'select user, host from mysql.user where host = ''%'';'
+	   end as action_sql_check,
+	   case when (SELECT COUNT(1) FROM mysql.user WHERE host = '%') = 0
+            then 'no action needed'
+            else 'UPDATE mysql.user SET host = $host where user = $user and host = ''%'';'  
+       end as action_sql_change 
 union
 SELECT case when (select count(1) from mysql.user WHERE NOT HOST IN ('::1', '127.0.0.1', 'localhost') and ssl_type ='') >= 1
             then 'NOK - There are users without any specific SSL certificate.'
             else 'OK - All business users have an SSL certificate set'
        end as diagnostic,
        case when (select count(1) from mysql.user WHERE NOT HOST IN ('::1', '127.0.0.1', 'localhost') and ssl_type ='') >= 1
-            then concat("select user, host, ssl_type FROM mysql.user WHERE NOT HOST IN (","'::1,'", "'127.0.0.1',","'localhost');", "/* RUN */", "GRANT USAGE ON *.* TO ", "'user'@'host' REQUIRE SSL;'")
+            then concat("select user, host, ssl_type FROM mysql.user WHERE NOT HOST IN (","'::1,'", "'127.0.0.1',","'localhost');")
             else 'no action needed'
-       end as action_cmd) T
+       end as action_sql_check,
+	   case when (select count(1) from mysql.user WHERE NOT HOST IN ('::1', '127.0.0.1', 'localhost') and ssl_type ='') >= 1
+            then 'GRANT USAGE ON *.* TO ''$user''@''$host'' REQUIRE SSL;'
+            else 'no action needed'
+       end as action_sql_change 
+	   ) T
 where substring(diagnostic, 1, 3) = 'NOK';	   

@@ -19,10 +19,12 @@ This shell script executes four (4) * .sql scripts and generates another four (4
 
 After performing all the procedures, it is necessary to restart the instance to apply the modifications:
 
-Shell script gcloud_restart_instance.sh
+Run shell script gcloud_restart_instance.sh
 
 
 References: 
 http://www.itsecure.hu/library/image/CIS_Oracle_MySQL_Community_Server_5.7_Benchmark_v1.0.0.pdf
 https://mariadb.com/kb/en/system-variable-differences-between-mariadb-102-and-mysql-57/
 https://cloud.google.com/sql/docs/mysql/flags#gcloud_1
+
+Notes: Only users with administrative privileges are able to change the SQL instance settings

@@ -2,6 +2,7 @@
 At the terminal, execute:
 
 	sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+	sudo nano /etc/mysql/mariadb.conf.d/mariadb.cnf
 
 Edit the variables as shown in the file example "my_example.cnf".
 
