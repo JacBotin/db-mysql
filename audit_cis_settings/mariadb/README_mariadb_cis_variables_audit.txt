@@ -20,6 +20,8 @@ After performing all the procedures, it is necessary to restart the instance to 
 
 -- on premises
 sudo /etc/init.d/mysql restart
+or 
+systemctl restart mariadb
 
 -- on gcloud
 gcloud sql instances restart $instancedb_name

@@ -9,7 +9,7 @@ mysql -u root
 # If OK. Connected in.. {mysql/mariadb> }
 # replace '$password' in the sql command below with the password chosen for the mysql user root
 
-update user set authentication_string=password('$password'), 
+update mysql.user set authentication_string=password('$password'), 
             plugin='mysql_native_password' where User='root';
  
 flush privileges;
