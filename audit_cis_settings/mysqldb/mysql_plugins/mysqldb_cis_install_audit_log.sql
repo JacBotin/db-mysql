@@ -14,7 +14,8 @@ WHERE PLUGIN_NAME LIKE 'audit_log%';
 --
 --
 */
--- To install:   
+-- To install in database:
+/*   
 INSTALL PLUGIN audit_log SONAME 'audit_log.so';
 
 set global audit_log_connection_policy = ALL;
@@ -26,3 +27,15 @@ SET GLOBAL audit_log_include_accounts = NULL;
 SET GLOBAL audit_log_policy = ALL;
 
 SET GLOBAL audit_log_statement_policy = ALL;
+*/
+
+-- in my.cnf
+# AUDIT #
+audit_log_format               = CSV
+audit_log_policy               = ALL
+audit_log_connection_policy    = ALL
+audit_log_statement_policy     = ALL
+audit_log_exclude_accounts     = NULL
+audit_log_include_accounts     = NULL
+audit_log_file                 = $path/mysql/audit/mysql_audit.log
+audit_log                      = 'FORCE_PLUS_PERMANENT'

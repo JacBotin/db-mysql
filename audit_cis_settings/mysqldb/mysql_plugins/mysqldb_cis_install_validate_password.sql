@@ -12,7 +12,7 @@ WHERE PLUGIN_NAME LIKE 'validate_password%';
 --
 --
 */
--- To install:   
+-- To install in database:   
 INSTALL PLUGIN validate_password SONAME 'validate_password.so';
 
 -- Enables control to prevent the password from being the same as the user's name 
@@ -39,6 +39,15 @@ SET GLOBAL validate_password_policy = MEDIUM;
 -- requires password change every 90 days
 SET GLOBAL default_password_lifetime=90;
 
-
 -- need to restart the service 
 -- sudo service mysql restart
+
+-- in my.cnf
+# PASSWORD #
+plugin-load                           = validate_password.so
+validate-password                     = FORCE_PLUS_PERMANENT
+validate_password_length              = 14
+validate_password_mixed_case_count    = 1
+validate_password_special_char_count  = 1
+validate_password_check_user_name     = ON
+validate_password_policy              = STRONG
