@@ -1,5 +1,4 @@
 # MariaDb - Lists MariaDb security configuration variables
-#
 echo "Enter the Hostname:";
 read hostname;
 # Removes all files before creating them updated

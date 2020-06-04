@@ -17,7 +17,7 @@ SELECT @@global.version as version_database,
             else 'OK - log_warnings 2 enables logging of error, warning and note messages. Equivalent log_error_verbosity = 3'
        end as description_diagnostic,
        case when (@@global.log_warnings is null or @@global.log_warnings = 0)
-            then 'SET GLOBAL log_warnings=1;'
+            then 'SET GLOBAL log_warnings=1'
             else 'no action needed'
        end as action  
 union
@@ -35,7 +35,7 @@ select @@global.version as version_database,
             else 'OK - log_error is writes the erros log to the file defined. It is necessary to ensure that the directory and files are under exclusive control of the mysql service. Run chown mysql:mysql <path_file> in the operation system'
        end description_diagnostic,
        case when (@@global.log_error = 'stderr' or @@global.log_error is null)
-            then 'SET GLOBAL log_error= ''/$path/logs/mysql_error.log'';'
+            then 'SET GLOBAL log_error= ''/$path/logs/mysql_error.log'''
             else 'no action needed'
        end as action  
 union	   
@@ -73,7 +73,7 @@ select @@global.version as version_database,
 	   end as description_diagnostic,
 	   case when @@global.slow_query_log = 0 
 	        then 'no action needed'
-	        else 'SET GLOBAL slow_query_log = 0;'
+	        else 'SET GLOBAL slow_query_log = 0'
 	   end as action   
 union	   
 select @@global.version as version_database,
@@ -85,7 +85,7 @@ select @@global.version as version_database,
 	   'OK_NOK - Check directory and file access control configured in the variable slow_query_log_file. It is necessary to ensure that the directory and files are under exclusive control of the mysql service. Run chown mysql:mysql <path_file> in the operation system.' as description_diagnostic,
 	   case when @@global.slow_query_log = 0 
 	        then 'no action needed'
-			else 'SET GLOBAL slow_query_log_file = ''/$path/logs/mariadb-slow.log'';' 
+			else 'SET GLOBAL slow_query_log_file = ''/$path/logs/mariadb-slow.log''' 
 	   end as action      
 union
 select @@global.version as version_database,
@@ -112,7 +112,7 @@ select @@global.version as version_database,
 	   end as description_diagnostic,
 	   CASE WHEN @@global.general_log = 0
 	        THEN 'no action needed' 
-	        ELSE 'SET GLOBAL general_log = ''OFF'';'
+	        ELSE 'SET GLOBAL general_log = ''OFF'''
        END AS action   	       
 union            
 select @@global.version as version_database,
@@ -122,7 +122,7 @@ select @@global.version as version_database,
 	   @@global.general_log_file as value_variable,
 	   'OK_NOK' as diagnostic,
 	   'OK_NOK - Check directory and access control configured in the variable general_log_file. It is necessary to ensure that the directory and files are under exclusive control of the mysql service. Run chown mysql:mysql <path_file> in the operation system' as description_diagnostic,
-	   'SET GLOBAL general_log_file = ''/$path/logs/mariadb-general.log'';' as action
+	   'SET GLOBAL general_log_file = ''/$path/logs/mariadb-general.log''' as action
 union 	   
 /* General */
 select @@global.version as version_database,
@@ -140,7 +140,7 @@ select @@global.version as version_database,
 	   end as description_diagnostic,
 	   CASE WHEN @@global.local_infile = 0
 	        THEN 'no action needed'
-	        ELSE 'SET GLOBAL local_infile = ''OFF'';'
+	        ELSE 'SET GLOBAL local_infile = ''OFF'''
             END AS action  
 union 
 SELECT @@global.version as version_database,
@@ -157,7 +157,7 @@ SELECT @@global.version as version_database,
             else 'OK - The InnoDB memcached Plugin is not installed'
        end as description_diagnostic,
        case when (select count(1) FROM INFORMATION_SCHEMA.PLUGINS WHERE PLUGIN_NAME = 'daemon_memcached' and PLUGIN_STATUS = 'ACTIVE') > 0
-            then 'uninstall plugin daemon_memcached;'
+            then 'uninstall plugin daemon_memcached'
             else 'no action needed'
        end as action  
 union 
@@ -195,7 +195,7 @@ SELECT @@global.version as version_database,
        end as description_diagnostic,
        case when (select count(1) from mysql.user where File_priv = 'Y' and User <> 'root') = 0
             then 'no action needed'
-            else 'select user, host from mysql.user where user <> ''root'' and File_priv = ''Y''; /* update mysql.user set File_priv = ''N'', plugin = ''mysql_native_password'' where user = $user and host = $host;*/'  
+            else 'select user, host from mysql.user where user <> ''root'' and File_priv = ''Y'' /* update mysql.user set File_priv = ''N'', plugin = ''mysql_native_password'' where user = $user and host = $host*/'  
        end as action  
 union 
 SELECT @@global.version as version_database,
@@ -213,7 +213,7 @@ SELECT @@global.version as version_database,
        end as description_diagnostic,
        case when (select count(1) from mysql.user where Super_priv = 'Y' and user <> 'root') = 0
             then 'no action needed'
-            else 'select user, host from mysql.user where user <> ''root'' and super_priv = ''Y''; /* update mysql.user set super_priv = ''N'', plugin = ''mysql_native_password'' where user = $user and host = $host;*/'
+            else 'select user, host from mysql.user where user <> ''root'' and super_priv = ''Y'' /* update mysql.user set super_priv = ''N'', plugin = ''mysql_native_password'' where user = $user and host = $host*/'
        end as action 
 union             
 SELECT @@global.version as version_database,
@@ -231,7 +231,7 @@ SELECT @@global.version as version_database,
        end as description_diagnostic,
        case when (select count(1) from mysql.user where shutdown_priv = 'Y' and user <> 'root') = 0
             then 'no action needed'
-            else 'select user, host from mysql.user where user <> ''root'' and shutdown_priv = ''Y''; /* update mysql.user set shutdown_priv = ''N'', plugin = ''mysql_native_password'' where user = $user and host = $host;*/'  
+            else 'select user, host from mysql.user where user <> ''root'' and shutdown_priv = ''Y'' /* update mysql.user set shutdown_priv = ''N'', plugin = ''mysql_native_password'' where user = $user and host = $host*/'  
        end as action 
 union             
 SELECT @@global.version as version_database,
@@ -249,7 +249,7 @@ SELECT @@global.version as version_database,
        end as description_diagnostic,
        case when (select count(1) from mysql.user where create_user_priv = 'Y' and user <> 'root') = 0
             then 'no action needed'
-            else 'select user, host from mysql.user where user <> ''root'' and create_user_priv = ''Y''; /* update mysql.user set create_user_priv = ''N'', plugin = ''mysql_native_password'' where user = $user and host = $host;*/'   
+            else 'select user, host from mysql.user where user <> ''root'' and create_user_priv = ''Y'' /* update mysql.user set create_user_priv = ''N'', plugin = ''mysql_native_password'' where user = $user and host = $host*/'   
        end as action 
 union             
 SELECT @@global.version as version_database,
@@ -267,7 +267,7 @@ SELECT @@global.version as version_database,
        end as description_diagnostic,
        case when (select count(1) from mysql.user where grant_priv = 'Y' and user <> 'root') = 0
             then 'no action needed'
-            else 'select user, host from mysql.user where user <> ''root'' and grant_priv = ''Y''; /* update mysql.user set grant_priv = ''N'', plugin = ''mysql_native_password'' where user = $user and host = $host;*/'   
+            else 'select user, host from mysql.user where user <> ''root'' and grant_priv = ''Y'' /* update mysql.user set grant_priv = ''N'', plugin = ''mysql_native_password'' where user = $user and host = $host*/'   
        end as action 
 union             
 SELECT @@global.version as version_database,
@@ -285,7 +285,7 @@ SELECT @@global.version as version_database,
        end as description_diagnostic,
        case when (select count(1) from mysql.user where repl_slave_priv = 'Y' and user <> 'root') = 0
             then 'no action needed'
-            else 'select user, host from mysql.user where user <> ''root'' and repl_slave_priv = ''Y''; /* update mysql.user set repl_slave_priv = ''N'', plugin = ''mysql_native_password'' where user = $user and host = $host;*/'   
+            else 'select user, host from mysql.user where user <> ''root'' and repl_slave_priv = ''Y'' /* update mysql.user set repl_slave_priv = ''N'', plugin = ''mysql_native_password'' where user = $user and host = $host*/'   
        end as action 
 union   
 SELECT @@global.version as version_database,
@@ -303,7 +303,7 @@ SELECT @@global.version as version_database,
        end as description_diagnostic,
        case when (SELECT count(1) FROM mysql.user WHERE ((Select_priv = 'Y') OR (Insert_priv = 'Y') OR (Update_priv = 'Y') OR (Delete_priv = 'Y') OR (Create_priv = 'Y') OR (Drop_priv = 'Y')) and user <> 'root') = 0
             then 'no action needed'
-            else 'SELECT USER, HOST FROM mysql.user WHERE ((Select_priv = ''Y'') OR (Insert_priv = ''Y'') OR (Update_priv = ''Y'') OR (Delete_priv = ''Y'') OR (Create_priv = ''Y'') OR (Drop_priv = ''Y'')) and user <> ''root''; /* UPDATE mysql.user SET Drop_priv = ''N'' where user = $user and host = $host;*/'  
+            else 'SELECT USER, HOST FROM mysql.user WHERE ((Select_priv = ''Y'') OR (Insert_priv = ''Y'') OR (Update_priv = ''Y'') OR (Delete_priv = ''Y'') OR (Create_priv = ''Y'') OR (Drop_priv = ''Y'')) and user <> ''root'' /* UPDATE mysql.user SET Drop_priv = ''N'' where user = $user and host = $host*/'  
        end as action 
 union 
 /* Authentication */       
@@ -340,7 +340,7 @@ SELECT @@global.version as version_database,
        end as description_diagnostic,
        case when (SELECT COUNT(1) FROM mysql.user WHERE authentication_string='') = 0
             then 'no action needed'
-            else 'select user, host from mysql.user where authentication_string=''''; /* UPDATE mysql.user SET plugin = ''mysql_native_password'', authentication_string = PASSWORD(''$pwd'') where user = $user and host = $host;*/' 
+            else 'select user, host from mysql.user where authentication_string='''' /* UPDATE mysql.user SET plugin = ''mysql_native_password'', authentication_string = PASSWORD(''$pwd'') where user = $user and host = $host*/' 
        end as action 
 union             
 SELECT @@global.version as version_database,
@@ -358,7 +358,7 @@ SELECT @@global.version as version_database,
        end as description_diagnostic,
        case when (SELECT COUNT(1) FROM mysql.user WHERE plugin <> 'mysql_native_password') = 0
             then 'no action needed'
-            else 'select user, host from mysql.user where plugin <> ''mysql_native_password''; /* UPDATE mysql.user SET plugin = ''mysql_native_password'' where user = $user and host = $host;*/' 
+            else 'select user, host from mysql.user where plugin <> ''mysql_native_password'' /* UPDATE mysql.user SET plugin = ''mysql_native_password'' where user = $user and host = $host*/' 
        end as action 
 union             
 SELECT @@global.version as version_database,
@@ -376,7 +376,7 @@ SELECT @@global.version as version_database,
        end as description_diagnostic,
        case when (SELECT COUNT(1) FROM mysql.user WHERE user = '') = 0
             then 'no action needed'
-            else 'select user, host from mysql.user where user = ''''; /* UPDATE mysql.user SET user = $user where user = '''' and host = $host; or DELETE mysql.user where user = '''' and host = $host;*/' 
+            else 'select user, host from mysql.user where user = '''' /* UPDATE mysql.user SET user = $user where user = '''' and host = $host or DELETE mysql.user where user = '''' and host = $host*/' 
        end as action 
 union 
 SELECT @@global.version as version_database,
@@ -394,7 +394,7 @@ SELECT @@global.version as version_database,
        end as description_diagnostic,
        case when (SELECT COUNT(1) FROM mysql.user WHERE host = '%') = 0
             then 'no action needed'
-            else 'select user, host from mysql.user where host = ''%''; /* UPDATE mysql.user SET host = $host where user = $user and host = ''%'';*/'  
+            else 'select user, host from mysql.user where host = ''%'' /* UPDATE mysql.user SET host = $host where user = $user and host = ''%''*/'  
        end as action 
 union 
 select @@global.version as version_database,
@@ -412,7 +412,7 @@ select @@global.version as version_database,
 	   end as description_diagnostic,
 	   CASE WHEN @@global.old_passwords = 0
 	        THEN 'no action needed'
-	        ELSE 'SET GLOBAL old_passwords = 0;'
+	        ELSE 'SET GLOBAL old_passwords = 0'
             END AS action  
 union 
 select @@global.version as version_database,
@@ -430,7 +430,7 @@ select @@global.version as version_database,
 	   end as description_diagnostic,
 	   CASE WHEN @@global.secure_auth = 1
 	        THEN 'no action needed'
-	        ELSE 'SET GLOBAL secure_auth = 1;'
+	        ELSE 'SET GLOBAL secure_auth = 1'
             END AS action  
 union 
 SELECT @@global.version as version_database,
@@ -467,7 +467,7 @@ select @@global.version as version_database,
 	   end as description_diagnostic,
 	   CASE WHEN @@global.have_ssl = 'YES'
 	        THEN 'no action needed'
-	        ELSE 'SET GLOBAL have_ssl = ''YES'';'
+	        ELSE 'SET GLOBAL have_ssl = ''YES'''
             END AS action  
 union  
 SELECT @@global.version as version_database,
@@ -484,6 +484,6 @@ SELECT @@global.version as version_database,
             else 'OK - All business users have an SSL certificate set'
        end as description_diagnostic,
        case when (select count(1) from mysql.user WHERE NOT HOST IN ('::1', '127.0.0.1', 'localhost') and ssl_type ='') >= 1
-            then 'select user, host, ssl_type FROM mysql.user WHERE NOT HOST IN (''::1,'', ''127.0.0.1'',''localhost''); /* RUN GRANT USAGE ON *.* TO ''user''@''host'' REQUIRE SSL */'
+            then 'select user, host, ssl_type FROM mysql.user WHERE NOT HOST IN (''::1,'', ''127.0.0.1'',''localhost'') /* RUN GRANT USAGE ON *.* TO ''user''@''host'' REQUIRE SSL */'
             else 'no action needed'
-       end as action ;	   
+       end as action 	   
