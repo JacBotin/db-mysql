@@ -1,0 +1,96 @@
+# MariaDB database server configuration file.
+#
+# For explanations see
+# http://dev.mysql.com/doc/mysql/en/server-system-variables.html
+
+[client]
+port            = 3306
+socket          = /var/run/mysqld/mysqld.sock
+
+[mysqld_safe]
+socket          = /var/run/mysqld/mysqld.sock
+nice            = 0
+
+[mysqld]
+#  Basic Settings #
+user            = mysql
+pid-file        = /var/run/mysqld/mysqld.pid
+socket          = /var/run/mysqld/mysqld.sock
+port            = 3306
+basedir         = /usr
+datadir         = /var/lib/mysql
+tmpdir          = /tmp
+lc_messages_dir = /usr/share/mysql
+lc_messages     = en_US
+skip-external-locking
+
+# Fine Tuning #
+max_connections         = 100
+connect_timeout         = 5
+wait_timeout            = 600
+max_allowed_packet      = 16M
+thread_cache_size       = 128
+sort_buffer_size        = 4M
+bulk_insert_buffer_size = 16M
+tmp_table_size          = 32M
+max_heap_table_size     = 32M
+
+# MyISAM #
+myisam_recover_options = BACKUP
+key_buffer_size         = 128M
+#open-files-limit       = 2000
+table_open_cache        = 400
+myisam_sort_buffer_size = 512M
+concurrent_insert       = 2
+read_buffer_size        = 2M
+read_rnd_buffer_size    = 1M
+
+# Query Cache Configuration #
+query_cache_limit               = 128K
+query_cache_size                = 64M
+#query_cache_type               = DEMAND
+
+# Logging #
+general_log_file        		= /var/log/mysql/mysql.log
+general_log             		= 0
+log_warnings            		= 2
+slow_query_log          		= 0
+slow_query_log_file     		= /var/log/mysql/mariadb-slow.log
+long_query_time 				= 1
+log_slow_verbosity      		= query_plan
+log-queries-not-using-indexes 	= 0
+
+# Binnary logging #
+log_bin                 		= /var/log/mysql/mariadb-bin
+log_bin_index           		= /var/log/mysql/mariadb-bin.index
+sync_binlog             		= 1
+expire_logs_days        		= 3
+max_binlog_size         		= 100M
+
+# Replication 
+relay_log              			= /var/log/mysql/relay-bin
+relay_log_info_file    			= /var/log/mysql/relay-bin.info
+
+# Safety #
+sql_mode               			= 'STRICT_ALL_TABLES,ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'  # cis variable
+local_infile            		= OFF
+
+# InnoDB
+default_storage_engine  		= InnoDB
+innodb_log_file_size    		= 50M
+innodb_buffer_pool_size 		= 256M
+innodb_log_buffer_size  		= 8M
+innodb_file_per_table   		= 1
+innodb_open_files       		= 400
+innodb_io_capacity      		= 400
+innodb_flush_method     		= O_DIRECT
+
+# NETWORK #
+have_ssl						= YES
+
+# Simple Password Option #
+simple_password_check                           = ON
+simple_password_check_digits                    = 1 # Number
+simple_password_check_minimal_length            = 14 # Pass Length
+simple_password_check_other_characters          = 1 # Special Char
+simple_password_check_letters_same_case         = 1 # Case Char
